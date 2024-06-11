@@ -67,6 +67,11 @@ public class Pokemon {
         return this.moves[3];
     }
 
+    //Get the selected move of a Pokemon
+    public Move getMove(int x) {
+        return this.moves[x];
+    }
+
     //Set the first move of a Pokemon
     public void setMoveA(Move x) {
         this.moves[0] = x;

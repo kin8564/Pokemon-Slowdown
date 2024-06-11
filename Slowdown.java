@@ -20,8 +20,10 @@ public class Slowdown {
      * Gen V Calculator
      * Damage = ((((((2*Level)/5)+2) * Power * A/D) / 50) + 2) * Critical * random * STAB * Type
      * Currently: All levels = 50; Power = 80; Crit = 1; 
+     * TODO
+     *      Crits, move selection
      */
-    public static void damageCalc (Pokemon attacker, Pokemon defender) {
+    public static void damageCalc (Pokemon attacker, Pokemon defender, Move move) {
         Random rng = new Random();
         int critCalc = 1;
         //rng.nextInt(256);
@@ -31,7 +33,7 @@ public class Slowdown {
         // } else {
         //     int critCalc = 1;
         // }
-        int baseDamage = (((22) * 80 * (attacker.attack / defender.defense)) / 50 + 2) * critCalc;
+        int baseDamage = (((22) * move.getPow() * (attacker.attack / defender.defense)) / 50 + 2) * critCalc;
         int[]dmgArray = typeMultiplier(baseDamage, attacker, defender);
         baseDamage = dmgArray[0];
         if (dmgArray[1] == 1) {
@@ -294,14 +296,20 @@ public class Slowdown {
      * B attacks!
      * (Super, not very missed, crit, etc.)
      * (Fainted, status, etc.)
+     * TODO
+     *      Turn order, random moves
      * 
      */
     public static Pokemon battle(Pokemon friend, Pokemon foe) {
         System.out.println(foe.getName() + " appears!");
+        Random rng = new Random();
+        //Until KO
         while (friend.healthPoints >= 1 && foe.healthPoints >= 1) {
             if (friend.speed > foe.speed) {
-                System.out.println(friend.getName() + " attacks!");
-                damageCalc(friend, foe);
+                //randomly select an available move
+                Move selected = friend.getMove(rng.nextInt(3));
+                System.out.println(friend.getName() + " uses " + selected.getName() + "!");
+                damageCalc(friend, foe, selected);
                 System.out.println("The enemy " + foe.getName() + " attacks!");
                 damageCalc(foe, friend);
             } else {
