@@ -1,13 +1,12 @@
-package Java.Pokemon;
-
 import java.util.Random;
-import Java.Pokemon.Pokemon.Types;;
 
 /*
  * Pokemon Battle Simulator
  * TODO
- *      Type advantages
  *      Movesets
+ *      PokeDex
+ *      AttackDex
+ *      Type advantages
  *      Review damage calculation
  *      Iterations
  *          Battles run themselves
@@ -18,21 +17,21 @@ import Java.Pokemon.Pokemon.Types;;
 public class Slowdown {
     
     /*
-     * Gen I Calculator
-     * Damage = ((((((2*Level*Critical)/5)+2) * Power * A/D) / 50) + 2) * Modifier
-     * Currently: All levels = 50; Power = 80
+     * Gen V Calculator
+     * Damage = ((((((2*Level)/5)+2) * Power * A/D) / 50) + 2) * Critical * random * STAB * Type
+     * Currently: All levels = 50; Power = 80; Crit = 1; 
      */
     public static void damageCalc (Pokemon attacker, Pokemon defender) {
-        Random rn = new Random();
+        Random rng = new Random();
         int critCalc = 1;
-        //rn.nextInt(256);
+        //rng.nextInt(256);
         // if (critCalc < (attacker.speed / 2)) {
-        //     critCalc = 2;
+        //     int critCalc = 2;
         //     System.out.println("It's a critical hit!");
         // } else {
-        //     critCalc = 1;
+        //     int critCalc = 1;
         // }
-        int baseDamage = (((100 * critCalc) * 80 * (attacker.attack / defender.defense)) / 50 + 2);
+        int baseDamage = (((22) * 80 * (attacker.attack / defender.defense)) / 50 + 2) * critCalc;
         int[]dmgArray = typeMultiplier(baseDamage, attacker, defender);
         baseDamage = dmgArray[0];
         if (dmgArray[1] == 1) {
@@ -40,7 +39,7 @@ public class Slowdown {
         } else if (dmgArray[2] == 1) {
             System.out.println("It's not very effective...");
         } else if (dmgArray[3] == 1) {
-            System.out.println("It doesn't affect " + defender.name + "...");
+            System.out.println("It doesn't affect " + defender.getName() + "...");
         }
         defender.healthPoints -= baseDamage;
     }
@@ -52,24 +51,38 @@ public class Slowdown {
         int immune = 0;
         int[] dmgArray;
 
-        if (defender.type1 != null) {
-            switch (defender.type1) {
+        if (defender.getTypeA() != null) {
+            switch (defender.getTypeA()) {
                 case BUG:
+                //Weak: Flying, Rock, Fire
+                //Resist: Fighting, Ground, Grass
                     break;
                 
                 case DARK:
+                //Weak: BUG, FAIRY, FIGHTING
+                //Resist: GHOST, DARK
+                //Immune: Psychic
                     break;
                 
                 case DRAGON:
+                //Weak: DRAGON, FAIRY, ICE
+                //Resist: FIRE, WATER, GRASS, ELECTRIC
                     break;
     
                 case ELECTRIC:
+                //Weak: GROUND
+                //Resist: FLYING, ELECTRIC, STEEL
                     break;
     
                 case FAIRY:
+                //Weak: POISON, STEEL
+                //Resist: BUG, DARK, FIGHTING, FIGHTING
+                //Immune: DRAGON
                     break;
     
                 case FIGHTING:
+                //Weak: FAIRY, FLYING, PSYCHIC
+                //Resist: BUG, DARK, ROCK
                     break;
     
                 case FIRE:
@@ -100,6 +113,9 @@ public class Slowdown {
                     break;
     
                 case GHOST:
+                //Weak: DARK, GHOST
+                //Resist: BUG, POISON
+                //Immune: NORMAL, FIGHTING
                     break;
     
                 case GRASS:
@@ -114,26 +130,41 @@ public class Slowdown {
                     break;
     
                 case GROUND:
+                //Weak: WATER, GRASS, ICE
+                //Resist: POISON, ROCK
+                //Immune: ELECTRIC
                     break;
     
                 case ICE:
+                //Weak: FIGHTING, ROCK, STEEL, FIRE
+                //Resist: ICE
                     break;
     
                 case NORMAL:
+                //Weak: FIGHTING
+                //Resist:
+                //Immune: GHOST
                     break;
     
                 case POISON:
                 //Weak: Ground, Psychic
-                //Resist: Fighting, Poison, Bug, Grass
+                //Resist: Fighting, Poison, Bug, Grass, FAIRY
                     break;
     
                 case PSYCHIC:
+                //Weak: BUG, DARK, GHOST
+                //Resist: FIGHTING, PSYCHIC
                     break;
     
                 case ROCK:
+                //Weak: FIGHTING, GROUND, STEEL, WATER, GRASS
+                //Resist: NORMAL, FLYSING, POISON, FIRE
                     break;
     
                 case STEEL:
+                //Weak: GROUND, FIGHTING, FIRE
+                //Resist: NORMAL, FLYING, ROCK, BUG, STEEL, GRASS, PSYCHIC, ICE, FAIRY, DRAGON
+                //Immune: POISON
                     break;
             
                 case WATER:
@@ -149,7 +180,7 @@ public class Slowdown {
             }
         }
         
-        if (defender.type2 != null) {
+        if (defender.getTypeB() != null) {
             switch (defender.type2) {
                 case BUG:
                     break;
@@ -266,40 +297,40 @@ public class Slowdown {
      * 
      */
     public static Pokemon battle(Pokemon friend, Pokemon foe) {
-        System.out.println(foe.name + " appears!");
+        System.out.println(foe.getName() + " appears!");
         while (friend.healthPoints >= 1 && foe.healthPoints >= 1) {
             if (friend.speed > foe.speed) {
-                System.out.println(friend.name + " attacks!");
+                System.out.println(friend.getName() + " attacks!");
                 damageCalc(friend, foe);
-                System.out.println("The enemy " + foe.name + " attacks!");
+                System.out.println("The enemy " + foe.getName() + " attacks!");
                 damageCalc(foe, friend);
             } else {
-                System.out.println("The enemy " + foe.name + " attacks!");
+                System.out.println("The enemy " + foe.getName() + " attacks!");
                 damageCalc(foe, friend);
-                System.out.println(friend.name + " attacks!");
+                System.out.println(friend.getName() + " attacks!");
                 damageCalc(friend, foe);
             }
         }
         if (foe.healthPoints < 1) {
-            System.out.println("The enemy " + foe.name + " fainted!");
+            System.out.println("The enemy " + foe.getName() + " fainted!");
             return friend;
         } else {
-            System.out.println(friend.name + " fainted...");
+            System.out.println(friend.getName() + " fainted...");
             return foe;
         }
 
     }
 
     public static void main(String[] args) {
-        Pokemon Pikachu = new Pokemon("Pikachu", 142, 117, 112, 156, Types.ELECTRIC, null);
-        Pokemon Bulbasaur = new Pokemon("Bulbasaur", 152, 128, 128, 106, Types.GRASS, Types.POISON);
-        Pokemon Charmander = new Pokemon("Charmander", 146, 123, 112, 128, Types.FIRE, null);
+        // Pokemon Pikachu = new Pokemon("Pikachu", 142, 117, 112, 156, Types.ELECTRIC, null, null, null, null, null);
+        // Pokemon Bulbasaur = new Pokemon("Bulbasaur", 152, 128, 128, 106, Types.GRASS, Types.POISON);
+        // Pokemon Charmander = new Pokemon("Charmander", 146, 123, 112, 128, Types.FIRE, null);
 
-        Pokemon Venusaur = new Pokemon("Venusaur", 187, 167, 167, 145, Types.GRASS, Types.POISON);
-        Pokemon Charizard = new Pokemon("Charizard", 185, 177, 150, 167, Types.FIRE, Types.FLYING);
-        Pokemon Blastoise = new Pokemon("Blastoise", 186, 150, 172, 143, Types.WATER, null);
+        // Pokemon Venusaur = new Pokemon("Venusaur", 187, 167, 167, 145, Types.GRASS, Types.POISON);
+        // Pokemon Charizard = new Pokemon("Charizard", 185, 177, 150, 167, Types.FIRE, Types.FLYING);
+        // Pokemon Blastoise = new Pokemon("Blastoise", 186, 150, 172, 143, Types.WATER, null);
         
-        Pokemon winner = battle(Charmander, Bulbasaur);
-        System.out.println(winner.name + " wins!");
+        // Pokemon winner = battle(Charmander, Bulbasaur);
+        // System.out.println(winner.name + " wins!");
     }
 }

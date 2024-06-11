@@ -1,40 +1,90 @@
-package Java.Pokemon;
-
-
 /*
  * Parent class for all Pokemon
  */
 public class Pokemon {
-    String name;
-    int healthPoints, attack, defense, speed;
-    enum Types {
-        FIRE, WATER, GRASS, ELECTRIC, ICE, FIGHTING,
-        POISON, GROUND, FLYING, PSYCHIC, BUG, ROCK,
-        GHOST, DARK, DRAGON, STEEL, FAIRY, NORMAL
-    }
-    Types type1;
-    Types type2;
+    private String name;
+    protected int healthPoints, attack, defense, speed;
+    private Types type1, type2;
+    private Move[] moves;
+    //private Move move1, move2, move3, move4;
 
-    public Pokemon (String monster, int hp, int atk, int def, int spe, Types type1, Types type2) {
+    protected Pokemon (String monster, int hp, int atk, int def, int spe, Types typeA, Types typeB, Move moveA, Move moveB, Move moveC, Move moveD) {
         this.name = monster;
         this.healthPoints = hp;
         this.attack = atk;
         this.defense = def;
         this.speed = spe;
-        this.type1 = type1;
-        this.type2 = type2;
+        this.type1 = typeA;
+        this.type2 = typeB;
+        this.moves[0] = moveA;
+        this.moves[1] = moveB;
+        this.moves[2] = moveC;
+        this.moves[3] = moveD;
     }
 
-    public static void main(String[] args) {
-        // Pokemon Pikachu = new Pokemon("Pikachu", 142, 117, 112, 156, Types.ELECTRIC, null);
-        // Pokemon Bulbasaur = new Pokemon("Bulbasaur", 152, 128, 128, 106, Types.GRASS, Types.POISON);
-        // Pokemon Charmander = new Pokemon("Charmander", 146, 123, 112, 128, Types.FIRE, null);
-
-        // Pokemon Venusaur = new Pokemon("Venusaur", 187, 167, 167, 145, Types.GRASS, Types.POISON);
-        // Pokemon Charizard = new Pokemon("Charizard", 185, 177, 150, 167, Types.FIRE, Types.FLYING);
-        // Pokemon Blastoise = new Pokemon("Blastoise", 186, 150, 172, 143, Types.WATER, null);
-        
-        // Pokemon winner = battle(Charmander, Bulbasaur);
-        // System.out.println(winner.name + " wins!");
+    //Get the name of the Pokemon
+    public String getName() {
+        return this.name;
     }
+
+    //Get the remaining health points of a Pokemon
+    public int getHP() {
+        return this.healthPoints;
+    }
+
+    //Set the remaining health points of a Pokemon
+    public void setHP(int x) {
+        this.healthPoints = x;
+    }
+
+    //Get the first type of a Pokemon
+    public Types getTypeA() {
+        return this.type1;
+    }
+
+    //Get the second type of a Pokemon
+    public Types getTypeB() {
+        return this.type2;
+    }
+
+    //Get the first move of a Pokemon
+    public Move getMoveA() {
+        return this.moves[0];
+    }
+
+    //Get the second move of a Pokemon
+    public Move getMoveB() {
+        return this.moves[1];
+    }
+
+    //Get the third move of a Pokemon
+    public Move getMoveC() {
+        return this.moves[2];
+    }
+
+    //Get the fourth move of a Pokemon
+    public Move getMoveD() {
+        return this.moves[3];
+    }
+
+    //Set the first move of a Pokemon
+    public void setMoveA(Move x) {
+        this.moves[0] = x;
+    }
+
+    //Set the second move of a Pokemon
+    public void setMoveB(Move x) {
+        this.moves[1] = x;
+    }
+
+    //Set the third move of a Pokemon
+    public void setMoveC(Move x) {
+        this.moves[2] = x;
+    }
+
+    //Set the fourth move of a Pokemon
+    public void setMoveD(Move x) {
+        this.moves[3] = x;
+    }
+
 }
