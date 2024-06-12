@@ -329,16 +329,11 @@ public class Slowdown {
 
     }
 
-    public static void main(String[] args) {
-        // Pokemon Pikachu = new Pokemon("Pikachu", 142, 117, 112, 156, Types.ELECTRIC, null, null, null, null, null);
-        // Pokemon Bulbasaur = new Pokemon("Bulbasaur", 152, 128, 128, 106, Types.GRASS, Types.POISON);
-        // Pokemon Charmander = new Pokemon("Charmander", 146, 123, 112, 128, Types.FIRE, null);
+    public static void main(String[] args) {    
+        AttackDex.populate();
+        PokeDex.populate();    
 
-        // Pokemon Venusaur = new Pokemon("Venusaur", 187, 167, 167, 145, Types.GRASS, Types.POISON);
-        // Pokemon Charizard = new Pokemon("Charizard", 185, 177, 150, 167, Types.FIRE, Types.FLYING);
-        // Pokemon Blastoise = new Pokemon("Blastoise", 186, 150, 172, 143, Types.WATER, null);
-        
-        // Pokemon winner = battle(Charmander, Bulbasaur);
-        // System.out.println(winner.name + " wins!");
+        Pokemon winner = battle(PokeDex.pokedex[4], PokeDex.pokedex[7]);
+        System.out.println(winner.getName() + " wins!");
     }
 }

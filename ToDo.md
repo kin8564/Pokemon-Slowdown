@@ -16,3 +16,5 @@
 - Change type advantage from attacker type to move type
 - Accuracy check
 - STAB
+- PP
+- Status moves
