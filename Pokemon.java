@@ -110,6 +110,11 @@ public class Pokemon {
         return this.moves[x];
     }
 
+    //Get number of available moves
+    public int getMovesNum() {
+        return this.moves.length;
+    }
+
     //Set the first move of a Pokemon
     public void setMoveA(Move x) {
         this.moves[0] = x;

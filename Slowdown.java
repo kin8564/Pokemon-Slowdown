@@ -21,18 +21,17 @@ public class Slowdown {
      * Damage = ((((((2*Level)/5)+2) * Power * A/D) / 50) + 2) * Critical * random * STAB * Type
      * Currently: All levels = 50; Power = 80; Crit = 1; 
      * TODO
-     *      Crits, move selection
+     * 		STAB, phys / spec
      */
     public static void damageCalc (Pokemon attacker, Pokemon defender, Move move) {
-        Random rng = new Random();
-        int critCalc = 1;
-        //rng.nextInt(256);
-        // if (critCalc < (attacker.speed / 2)) {
-        //     int critCalc = 2;
-        //     System.out.println("It's a critical hit!");
-        // } else {
-        //     int critCalc = 1;
-        // }
+		Random rng = new Random();
+        int critCalc = rng.nextInt(256);
+        if (critCalc < (attacker.speed / 2)) {
+            critCalc = 2;
+            System.out.println("It's a critical hit!");
+        } else {
+            critCalc = 1;
+        }
         int baseDamage = (((22) * move.getPow() * (attacker.attack / defender.defense)) / 50 + 2) * critCalc;
         int[]dmgArray = typeMultiplier(baseDamage, attacker, defender);
         baseDamage = dmgArray[0];
@@ -289,34 +288,57 @@ public class Slowdown {
         return dmgArray;
     }
 
+	//Change a Pokemon's state depending on the status move used
+	//TODO
+	public static void statusCalc(Pokemon attacker, Pokemon defenfer, Move move) {
+
+	}
+
     /*
-     * A attacks!
-     * (Super, not very, missed, crit, etc.)
-     * (Fainted, status, etc.)
-     * B attacks!
-     * (Super, not very missed, crit, etc.)
-     * (Fainted, status, etc.)
-     * TODO
-     *      Turn order, random moves
-     * 
+     * Two Pokemon battle until one's HP drops to 0 
      */
     public static Pokemon battle(Pokemon friend, Pokemon foe) {
         System.out.println(foe.getName() + " appears!");
         Random rng = new Random();
         //Until KO
         while (friend.healthPoints >= 1 && foe.healthPoints >= 1) {
+			Move selected;
             if (friend.speed > foe.speed) {
                 //randomly select an available move
-                Move selected = friend.getMove(rng.nextInt(3));
+                selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
                 System.out.println(friend.getName() + " uses " + selected.getName() + "!");
-                damageCalc(friend, foe, selected);
-                System.out.println("The enemy " + foe.getName() + " attacks!");
-                damageCalc(foe, friend);
+				if (selected.getCat().equals("STAT")) {
+					statusCalc(friend, foe, selected);
+				} else {
+					damageCalc(friend, foe, selected);
+				}
+                
+				//enemy attacks next
+				selected = friend.getMove(rng.nextInt(foe.getMovesNum()-1));
+				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
+                if (selected.getCat().equals("STAT")) {
+					statusCalc(friend, foe, selected);
+				} else {
+					damageCalc(friend, foe, selected);
+				}
             } else {
-                System.out.println("The enemy " + foe.getName() + " attacks!");
-                damageCalc(foe, friend);
-                System.out.println(friend.getName() + " attacks!");
-                damageCalc(friend, foe);
+                //enemy randomly selects an available move
+				selected = friend.getMove(rng.nextInt(foe.getMovesNum()-1));
+				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
+                if (selected.getCat().equals("STAT")) {
+					statusCalc(friend, foe, selected);
+				} else {
+					damageCalc(friend, foe, selected);
+				}
+                
+				//you attack next
+				selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
+				System.out.println(friend.getName() + " uses " + selected.getName() + "!");
+                if (selected.getCat().equals("STAT")) {
+					statusCalc(friend, foe, selected);
+				} else {
+					damageCalc(friend, foe, selected);
+				}
             }
         }
         if (foe.healthPoints < 1) {
