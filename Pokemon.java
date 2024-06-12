@@ -1,25 +1,23 @@
-/*
+/**
  * Parent class for all Pokemon
  */
 public class Pokemon {
     private String name;
-    protected int healthPoints, attack, defense, speed;
+    protected int healthPoints, attack, defense, specialAttack, specialDefense, speed;
     private Types type1, type2;
     private Move[] moves;
     //private Move move1, move2, move3, move4;
 
-    protected Pokemon (String monster, int hp, int atk, int def, int spe, Types typeA, Types typeB, Move moveA, Move moveB, Move moveC, Move moveD) {
+    protected Pokemon (String monster, int hp, int atk, int def, int spa, int spd, int spe, Types typeA, Types typeB) {
         this.name = monster;
         this.healthPoints = hp;
         this.attack = atk;
         this.defense = def;
+        this.specialAttack = spa;
+        this.specialDefense = spd;
         this.speed = spe;
         this.type1 = typeA;
         this.type2 = typeB;
-        this.moves[0] = moveA;
-        this.moves[1] = moveB;
-        this.moves[2] = moveC;
-        this.moves[3] = moveD;
     }
 
     //Get the name of the Pokemon
@@ -35,6 +33,46 @@ public class Pokemon {
     //Set the remaining health points of a Pokemon
     public void setHP(int x) {
         this.healthPoints = x;
+    }
+
+    public int getAtk() {
+        return this.attack;
+    }
+
+    public void setAtk(int x) {
+        this.attack = x;
+    }
+
+    public int getDef() {
+        return this.defense;
+    }
+
+    public void setDef(int x) {
+        this.defense = x;
+    }
+
+    public int getSpa() {
+        return this.specialAttack;
+    }
+
+    public void setSpa(int x) {
+        this.specialAttack = x;
+    }
+
+    public int getSpd() {
+        return this.specialDefense;
+    }
+
+    public void setSpd(int x) {
+        this.specialDefense = x;
+    }
+
+    public int getSpe() {
+        return this.speed;
+    }
+
+    public void setSpe(int x) {
+        this.speed = x;
     }
 
     //Get the first type of a Pokemon
