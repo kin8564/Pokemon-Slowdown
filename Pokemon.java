@@ -18,6 +18,7 @@ public class Pokemon {
         this.speed = spe;
         this.type1 = typeA;
         this.type2 = typeB;
+        this.moves = new Move[4];
     }
 
     //Get the name of the Pokemon

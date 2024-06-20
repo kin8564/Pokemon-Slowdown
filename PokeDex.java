@@ -17,10 +17,10 @@ public class PokeDex {
             pokedex[4].setMoveD(AttackDex.attackdex.get("Smokescreen"));
 
         pokedex[7] = new Pokemon("Squirtle", 151, 110, 128, 112, 127, 104, Types.WATER, null);
-            pokedex[4].setMoveA(AttackDex.attackdex.get("Tackle"));
-            pokedex[4].setMoveB(AttackDex.attackdex.get("Tail Whip"));
-            pokedex[4].setMoveC(AttackDex.attackdex.get("Water Gun"));
-            pokedex[4].setMoveD(AttackDex.attackdex.get("Withdraw"));
+            pokedex[7].setMoveA(AttackDex.attackdex.get("Tackle"));
+            pokedex[7].setMoveB(AttackDex.attackdex.get("Tail Whip"));
+            pokedex[7].setMoveC(AttackDex.attackdex.get("Water Gun"));
+            pokedex[7].setMoveD(AttackDex.attackdex.get("Withdraw"));
         //Pokemon Pikachu = new Pokemon("Pikachu", 142, 117, 112, 156, Types.ELECTRIC, null, null, null, null, null);
         // Pokemon Venusaur = new Pokemon("Venusaur", 187, 167, 167, 145, Types.GRASS, Types.POISON);
         // Pokemon Charizard = new Pokemon("Charizard", 185, 177, 150, 167, Types.FIRE, Types.FLYING);

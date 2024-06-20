@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /*
  * Pokemon Battle Simulator
@@ -55,11 +56,11 @@ public class Slowdown {
         int baseDamage = (int) ((((22) * move.getPow() * (force / object)) / 50 + 2) * critCalc * randFact * stab);
         int[]dmgArray = typeMultiplier(baseDamage, move, defender);
         baseDamage = dmgArray[0];
-        if (dmgArray[1] == 1) {
+        if (dmgArray[0] == 1) {
             System.out.println("It's super effective!");
-        } else if (dmgArray[2] == 1) {
+        } else if (dmgArray[1] == 1) {
             System.out.println("It's not very effective...");
-        } else if (dmgArray[3] == 1) {
+        } else if (dmgArray[2] == 1) {
             System.out.println("It doesn't affect " + defender.getName() + "...");
         }
         defender.setHP(defender.getHP() - baseDamage);
@@ -559,7 +560,7 @@ public class Slowdown {
      * TODO
 	 */
 	public static void statusCalc(Pokemon attacker, Pokemon defenfer, Move move) {
-
+        System.out.println("Nothing happened...");
 	}
 
     /**
@@ -585,21 +586,21 @@ public class Slowdown {
 				}
                 
 				//enemy attacks next
-				selected = friend.getMove(rng.nextInt(foe.getMovesNum()-1));
+				selected = foe.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
                 if (selected.getCat() == 3) {
-					statusCalc(friend, foe, selected);
+					statusCalc(foe, friend, selected);
 				} else {
-					damageCalc(friend, foe, selected);
+					damageCalc(foe, friend, selected);
 				}
             } else {
                 //enemy randomly selects an available move
-				selected = friend.getMove(rng.nextInt(foe.getMovesNum()-1));
+				selected = foe.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
                 if (selected.getCat() == 3) {
-					statusCalc(friend, foe, selected);
+					statusCalc(foe, friend, selected);
 				} else {
-					damageCalc(friend, foe, selected);
+					damageCalc(foe, friend, selected);
 				}
                 
 				//you attack next
@@ -623,9 +624,10 @@ public class Slowdown {
     }
 
     public static void main(String[] args) {    
-        AttackDex.populate();
+        AttackDex.populate();        
         PokeDex.populate();    
 
+        //User Charmander vs enemy Squirtle
         Pokemon winner = battle(PokeDex.pokedex[4], PokeDex.pokedex[7]);
         System.out.println(winner.getName() + " wins!");
     }

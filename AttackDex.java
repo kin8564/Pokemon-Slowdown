@@ -4,6 +4,7 @@ public class AttackDex {
     public static HashMap<String, Move> attackdex;
 
     public static void populate() {
+        attackdex = new HashMap<>();
         attackdex.put("Tackle", new Move("Tackle", Types.NORMAL, 1, 40, 100, 35));
         attackdex.put("Scratch", new Move("Scratch", Types.NORMAL, 1, 40, 100, 35));
         attackdex.put("Growl", new Move("Growl", Types.NORMAL, 3, 0, 100, 40));
