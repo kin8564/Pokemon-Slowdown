@@ -27,6 +27,8 @@ public class Slowdown {
 		Random rng = new Random();
         double stab = 1.0;
         int randFact = 0;
+        int force = 0;
+        int object = 0;
 
         int critCalc = rng.nextInt(256);
         if (critCalc < (attacker.getSpe() / 2)) {
@@ -559,7 +561,7 @@ public class Slowdown {
                 //randomly select an available move
                 selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
                 System.out.println(friend.getName() + " uses " + selected.getName() + "!");
-				if (selected.getCat().equals("STAT")) {
+				if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
@@ -568,7 +570,7 @@ public class Slowdown {
 				//enemy attacks next
 				selected = friend.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
-                if (selected.getCat().equals("STAT")) {
+                if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
@@ -577,7 +579,7 @@ public class Slowdown {
                 //enemy randomly selects an available move
 				selected = friend.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
-                if (selected.getCat().equals("STAT")) {
+                if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
@@ -586,7 +588,7 @@ public class Slowdown {
 				//you attack next
 				selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
 				System.out.println(friend.getName() + " uses " + selected.getName() + "!");
-                if (selected.getCat().equals("STAT")) {
+                if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);

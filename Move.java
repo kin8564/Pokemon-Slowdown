@@ -3,11 +3,12 @@
  * Currently: Category and PP are non-functional
  */
 public class Move {
-    private final String name, category;
+    private final String name;
     private final Types type;
+    private final int category;
     int power, accuracy, pp;
 
-    protected Move (String name, Types type, String cat, int pw, int acc, int points) {
+    protected Move (String name, Types type, int cat, int pw, int acc, int points) {
         this.name = name;
         this.type = type;
         this.category = cat;
@@ -24,7 +25,7 @@ public class Move {
         return this.type;
     }
 
-    public String getCat() {
+    public int getCat() {
         return this.category;
     }
     
