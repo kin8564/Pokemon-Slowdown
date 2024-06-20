@@ -5,5 +5,5 @@ Pokemon Slowdown is a Java application aiming to simulate Pokemon battles, in li
 ## Planned Features
 
 - All 151 Pokemon from Gen 1
-- Battle system accurate to Gen 1 minimum, future generations as deemed possible
+- Battle system heavily inspired by the fifth generation, with liberties
 - Physical / Special Split

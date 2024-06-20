@@ -6,7 +6,6 @@ import java.util.Random;
  *      Movesets
  *      PokeDex
  *      AttackDex
- *      Type advantages
  *      Review damage calculation
  *      Iterations
  *          Battles run themselves
@@ -16,12 +15,13 @@ import java.util.Random;
  */
 public class Slowdown {
     
-    /*
+    /**
      * Gen V Calculator
      * Damage = ((((((2*Level)/5)+2) * Power * A/D) / 50) + 2) * Critical * random * STAB * Type
-     * Currently: All levels = 50; Power = 80; 
-     * TODO
-     * 		phys / spec
+     * Currently: All levels = 50 
+     * @param attacker
+     * @param defender
+     * @param move
      */
     public static void damageCalc (Pokemon attacker, Pokemon defender, Move move) {
 		Random rng = new Random();
@@ -29,7 +29,15 @@ public class Slowdown {
         int randFact = 0;
         int force = 0;
         int object = 0;
-
+        //physical or special attack
+        if (move.getCat() == 1) {
+            force = attacker.getAtk();
+            object = defender.getDef();
+        } else if (move.getCat() == 2) {
+            force = attacker.getSpa();
+            object = defender.getSpd();
+        }
+        //critical hit
         int critCalc = rng.nextInt(256);
         if (critCalc < (attacker.getSpe() / 2)) {
             critCalc = 2;
@@ -37,12 +45,14 @@ public class Slowdown {
         } else {
             critCalc = 1;
         }
+        //random factor
         randFact = (rng.nextInt(85, 101) / 100);
+        //same type attack bonus
         if (move.getType() == attacker.getTypeA() || move.getType() == attacker.getTypeB()) {
             stab = 1.5;
         }
 
-        int baseDamage = (int) ((((22) * move.getPow() * (attacker.getAtk() / defender.getDef())) / 50 + 2) * critCalc * randFact * stab);
+        int baseDamage = (int) ((((22) * move.getPow() * (force / object)) / 50 + 2) * critCalc * randFact * stab);
         int[]dmgArray = typeMultiplier(baseDamage, move, defender);
         baseDamage = dmgArray[0];
         if (dmgArray[1] == 1) {
@@ -542,14 +552,21 @@ public class Slowdown {
         return dmgArray;
     }
 
-	//Change a Pokemon's state depending on the status move used
-	//TODO
+	/**Change a Pokemon's state depending on the status move used
+	 * @param attacker
+	 * @param defenfer
+	 * @param move
+     * TODO
+	 */
 	public static void statusCalc(Pokemon attacker, Pokemon defenfer, Move move) {
 
 	}
 
-    /*
-     * Two Pokemon battle until one's HP drops to 0 
+    /**
+     * Battle between two Pokemon
+     * @param friend
+     * @param foe
+     * @return
      */
     public static Pokemon battle(Pokemon friend, Pokemon foe) {
         System.out.println(foe.getName() + " appears!");
