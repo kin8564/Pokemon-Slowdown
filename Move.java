@@ -3,8 +3,8 @@
  * Currently: Category and PP are non-functional
  */
 public class Move {
-    final String name, category;
-    final Types type;
+    private final String name, category;
+    private final Types type;
     int power, accuracy, pp;
 
     protected Move (String name, Types type, String cat, int pw, int acc, int points) {

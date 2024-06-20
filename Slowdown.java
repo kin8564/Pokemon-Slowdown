@@ -19,21 +19,29 @@ public class Slowdown {
     /*
      * Gen V Calculator
      * Damage = ((((((2*Level)/5)+2) * Power * A/D) / 50) + 2) * Critical * random * STAB * Type
-     * Currently: All levels = 50; Power = 80; Crit = 1; 
+     * Currently: All levels = 50; Power = 80; 
      * TODO
-     * 		STAB, phys / spec
+     * 		phys / spec
      */
     public static void damageCalc (Pokemon attacker, Pokemon defender, Move move) {
 		Random rng = new Random();
+        double stab = 1.0;
+        int randFact = 0;
+
         int critCalc = rng.nextInt(256);
-        if (critCalc < (attacker.speed / 2)) {
+        if (critCalc < (attacker.getSpe() / 2)) {
             critCalc = 2;
             System.out.println("It's a critical hit!");
         } else {
             critCalc = 1;
         }
-        int baseDamage = (((22) * move.getPow() * (attacker.attack / defender.defense)) / 50 + 2) * critCalc;
-        int[]dmgArray = typeMultiplier(baseDamage, attacker, defender);
+        randFact = (rng.nextInt(85, 101) / 100);
+        if (move.getType() == attacker.getTypeA() || move.getType() == attacker.getTypeB()) {
+            stab = 1.5;
+        }
+
+        int baseDamage = (int) ((((22) * move.getPow() * (attacker.getAtk() / defender.getDef())) / 50 + 2) * critCalc * randFact * stab);
+        int[]dmgArray = typeMultiplier(baseDamage, move, defender);
         baseDamage = dmgArray[0];
         if (dmgArray[1] == 1) {
             System.out.println("It's super effective!");
@@ -42,139 +50,248 @@ public class Slowdown {
         } else if (dmgArray[3] == 1) {
             System.out.println("It doesn't affect " + defender.getName() + "...");
         }
-        defender.healthPoints -= baseDamage;
+        defender.setHP(defender.getHP() - baseDamage);
     }
 
-    public static int[] typeMultiplier (int damage, Pokemon attacker, Pokemon defender) {
+    /**
+     * Multiplies damage based on interactions between Types
+     * @param damage base damage to be multiplied
+     * @param move Move used by attacking pokemon
+     * @param defender Defending pokemon
+     * @return int array of calculated damage and flags for effectiveness
+     */
+    public static int[] typeMultiplier (int damage, Move move, Pokemon defender) {
         double modifier = 1.0;
         int superEff = 0;
         int notVeryEff = 0;
-        int immune = 0;
         int[] dmgArray;
 
         if (defender.getTypeA() != null) {
             switch (defender.getTypeA()) {
                 case BUG:
-                //Weak: Flying, Rock, Fire
-                //Resist: Fighting, Ground, Grass
+                    //Weak: Flying, Rock, Fire
+                    if (move.getType() == Types.FLYING || move.getType() == Types.ROCK || move.getType() == Types.FIRE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: Fighting, Ground, Grass
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.GROUND || move.getType() == Types.GRASS) {
+                        modifier = modifier / 2;
+                    }
                     break;
                 
                 case DARK:
-                //Weak: BUG, FAIRY, FIGHTING
-                //Resist: GHOST, DARK
-                //Immune: Psychic
+                    //Weak: BUG, FAIRY, FIGHTING
+                    if (move.getType() == Types.BUG || move.getType() == Types.FAIRY || move.getType() == Types.FIGHTING) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: GHOST, DARK
+                    if (move.getType() == Types.GHOST || move.getType() == Types.DARK) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: Psychic
+                    if (move.getType() == Types.PSYCHIC) {
+                        modifier = 0;
+                    }
                     break;
                 
                 case DRAGON:
-                //Weak: DRAGON, FAIRY, ICE
-                //Resist: FIRE, WATER, GRASS, ELECTRIC
+                    //Weak: DRAGON, FAIRY, ICE
+                    if (move.getType() == Types.DRAGON || move.getType() == Types.FAIRY || move.getType() == Types.ICE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: FIRE, WATER, GRASS, ELECTRIC
+                    if (move.getType() == Types.FIRE || move.getType() == Types.WATER || move.getType() == Types.GRASS || move.getType() == Types.ELECTRIC) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case ELECTRIC:
-                //Weak: GROUND
-                //Resist: FLYING, ELECTRIC, STEEL
+                    //Weak: GROUND
+                    if (move.getType() == Types.GROUND) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: FLYING, ELECTRIC, STEEL
+                    if (move.getType() == Types.FLYING || move.getType() == Types.ELECTRIC || move.getType() == Types.STEEL) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case FAIRY:
-                //Weak: POISON, STEEL
-                //Resist: BUG, DARK, FIGHTING, FIGHTING
-                //Immune: DRAGON
+                    //Weak: POISON, STEEL
+                    if (move.getType() == Types.POISON || move.getType() == Types.STEEL) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: BUG, DARK, FIGHTING
+                    if (move.getType() == Types.BUG || move.getType() == Types.DARK || move.getType() == Types.FIGHTING) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: DRAGON
+                    if (move.getType() == Types.DRAGON) {
+                        modifier = 0;
+                    }
                     break;
     
                 case FIGHTING:
-                //Weak: FAIRY, FLYING, PSYCHIC
-                //Resist: BUG, DARK, ROCK
+                    //Weak: FAIRY, FLYING, PSYCHIC
+                    if (move.getType() == Types.FAIRY || move.getType() == Types.FLYING || move.getType() == Types.PSYCHIC) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: BUG, DARK, ROCK
+                    if (move.getType() == Types.BUG || move.getType() == Types.DARK || move.getType() == Types.ROCK) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case FIRE:
-                    if (attacker.type1 == Types.GROUND || attacker.type1 == Types.ROCK || attacker.type1 == Types.WATER || 
-                        attacker.type2 == Types.GROUND || attacker.type2 == Types.ROCK || attacker.type2 == Types.WATER) {
+                    //Weak: Ground, Rock, Water
+                    if (move.getType() == Types.GROUND || move.getType() == Types.ROCK || move.getType() == Types.WATER) {
                         modifier = modifier * 2;
                     }
-                    if (attacker.type1 == Types.BUG || attacker.type1 == Types.STEEL || attacker.type1 == Types.FIRE ||
-                        attacker.type1 == Types.GRASS || attacker.type1 == Types.ICE || attacker.type1 == Types.FAIRY ||  
-                        attacker.type2 == Types.BUG || attacker.type2 == Types.STEEL || attacker.type2 == Types.FIRE ||
-                        attacker.type2 == Types.GRASS || attacker.type2 == Types.ICE || attacker.type2 == Types.FAIRY) {
+                    //Resist: Bug, Steel, Fire, Grass, Ice, Fairy
+                    if (move.getType() == Types.BUG || move.getType() == Types.STEEL || move.getType() == Types.FIRE ||
+                        move.getType() == Types.GRASS || move.getType() == Types.ICE || move.getType() == Types.FAIRY) {
                         modifier = modifier / 2;
                     }
                     break;
     
                 case FLYING:
-                    if (attacker.type1 == Types.ELECTRIC || attacker.type1 == Types.ICE || attacker.type1 == Types.ROCK ||
-                        attacker.type2 == Types.ELECTRIC || attacker.type2 == Types.ICE || attacker.type2 == Types.ROCK) {
+                    //Weak: Electric, Ice, Rock
+                    if (move.getType() == Types.ELECTRIC || move.getType() == Types.ICE || move.getType() == Types.ROCK) {
                         modifier = modifier * 2;
                        }
-                    if (attacker.type1 == Types.BUG || attacker.type1 == Types.FIGHTING || attacker.type1 == Types.GRASS || 
-                        attacker.type2 == Types.BUG || attacker.type2 == Types.FIGHTING || attacker.type2 == Types.GRASS) {
+                    //Resist: Bug, Fighting, Grass
+                    if (move.getType() == Types.BUG || move.getType() == Types.FIGHTING || move.getType() == Types.GRASS) {
                         modifier = modifier / 2;
                     }
-                    if (attacker.type1 == Types.GROUND || attacker.type2 == Types.GROUND) {
+                    //Immune: Ground
+                    if (move.getType() == Types.GROUND) {
                         modifier = 0;
                     }
                     break;
     
                 case GHOST:
-                //Weak: DARK, GHOST
-                //Resist: BUG, POISON
-                //Immune: NORMAL, FIGHTING
+                    //Weak: DARK, GHOST
+                    if (move.getType() == Types.DARK || move.getType() == Types.GHOST) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: BUG, POISON
+                    if (move.getType() == Types.BUG || move.getType() == Types.POISON) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: NORMAL, FIGHTING
+                    if (move.getType() == Types.NORMAL || move.getType() == Types.FIGHTING) {
+                        modifier = 0;
+                    }
                     break;
     
                 case GRASS:
-                    if (attacker.type1 == Types.BUG || attacker.type1 == Types.FIRE || attacker.type1 == Types.FLYING || attacker.type1 == Types.ICE || attacker.type1 == Types.POISON ||
-                        attacker.type2 == Types.BUG || attacker.type2 == Types.FIRE || attacker.type2 == Types.FLYING || attacker.type2 == Types.ICE || attacker.type2 == Types.POISON) {
+                    //Weak: Bug, Fire, Flying, Ice, Poison
+                    if (move.getType() == Types.BUG || move.getType() == Types.FIRE || move.getType() == Types.FLYING ||
+                        move.getType() == Types.ICE || move.getType() == Types.POISON) {
                         modifier = modifier * 2;
                         }
-                    if (attacker.type1 == Types.ELECTRIC || attacker.type1 == Types.GRASS || attacker.type1 == Types.GROUND || attacker.type1 == Types.WATER ||
-                        attacker.type2 == Types.ELECTRIC || attacker.type2 == Types.GRASS || attacker.type2 == Types.GROUND || attacker.type2 == Types.WATER) {
+                    //Resist: Electric, Grass, Ground, Water
+                    if (move.getType() == Types.ELECTRIC || move.getType() == Types.GRASS || move.getType() == Types.GROUND || move.getType() == Types.WATER) {
                         modifier = modifier / 2;
                     }
                     break;
     
                 case GROUND:
-                //Weak: WATER, GRASS, ICE
-                //Resist: POISON, ROCK
-                //Immune: ELECTRIC
+                    //Weak: WATER, GRASS, ICE
+                    if (move.getType() == Types.WATER || move.getType() == Types.GRASS || move.getType() == Types.ICE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: POISON, ROCK
+                    if (move.getType() == Types.POISON || move.getType() == Types.ROCK) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: ELECTRIC
+                    if (move.getType() == Types.ELECTRIC) {
+                        modifier = 0;
+                    }
                     break;
     
                 case ICE:
-                //Weak: FIGHTING, ROCK, STEEL, FIRE
-                //Resist: ICE
+                    //Weak: FIGHTING, ROCK, STEEL, FIRE
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.ROCK || move.getType() == Types.STEEL || move.getType() == Types.FIRE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: ICE
+                    if (move.getType() == Types.ICE) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case NORMAL:
-                //Weak: FIGHTING
-                //Resist:
-                //Immune: GHOST
+                    //Weak: FIGHTING
+                    if (move.getType() == Types.FIGHTING) {
+                        modifier = modifier * 2;
+                    }
+                    //Immune: GHOST
+                    if (move.getType() == Types.GHOST) {
+                        modifier = 0;
+                    }
                     break;
     
                 case POISON:
-                //Weak: Ground, Psychic
-                //Resist: Fighting, Poison, Bug, Grass, FAIRY
+                    //Weak: Ground, Psychic
+                    if (move.getType() == Types.GROUND || move.getType() == Types.PSYCHIC) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: Fighting, Poison, Bug, Grass, FAIRY
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.POISON || move.getType() == Types.BUG ||
+                        move.getType() == Types.GRASS || move.getType() == Types.FAIRY) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case PSYCHIC:
-                //Weak: BUG, DARK, GHOST
-                //Resist: FIGHTING, PSYCHIC
+                    //Weak: BUG, DARK, GHOST
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.POISON || move.getType() == Types.BUG) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: FIGHTING, PSYCHIC
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.PSYCHIC) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case ROCK:
-                //Weak: FIGHTING, GROUND, STEEL, WATER, GRASS
-                //Resist: NORMAL, FLYSING, POISON, FIRE
+                    //Weak: FIGHTING, GROUND, STEEL, WATER, GRASS
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.GROUND || move.getType() == Types.STEEL||
+                        move.getType() == Types.GRASS || move.getType() == Types.GRASS) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: NORMAL, FLYING, POISON, FIRE
+                    if (move.getType() == Types.NORMAL || move.getType() == Types.FLYING || move.getType() == Types.POISON || move.getType() == Types.FIRE) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case STEEL:
-                //Weak: GROUND, FIGHTING, FIRE
-                //Resist: NORMAL, FLYING, ROCK, BUG, STEEL, GRASS, PSYCHIC, ICE, FAIRY, DRAGON
-                //Immune: POISON
+                    //Weak: GROUND, FIGHTING, FIRE
+                    if (move.getType() == Types.GROUND || move.getType() == Types.FIGHTING || move.getType() == Types.FIRE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: NORMAL, FLYING, ROCK, BUG, STEEL, GRASS, PSYCHIC, ICE, FAIRY, DRAGON
+                    if (move.getType() == Types.NORMAL || move.getType() == Types.FLYING || move.getType() == Types.ROCK || move.getType() == Types.BUG ||
+                        move.getType() == Types.STEEL || move.getType() == Types.GRASS || move.getType() == Types.PSYCHIC || move.getType() == Types.ICE ||
+                        move.getType() == Types.FAIRY || move.getType() == Types.DRAGON) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: POISON
+                    if (move.getType() == Types.POISON) {
+                        modifier = 0;
+                    }
                     break;
             
                 case WATER:
-                    if (attacker.type1 == Types.ELECTRIC || attacker.type1 == Types.GRASS ||
-                        attacker.type2 == Types.ELECTRIC || attacker.type2 == Types.GRASS) {
+                    //Weak: Electric, Grass
+                    if (move.getType() == Types.ELECTRIC || move.getType() == Types.GRASS) {
                         modifier = modifier * 2;
                     }
-                    if (attacker.type1 == Types.STEEL || attacker.type1 == Types.FIRE || attacker.type1 == Types.WATER || attacker.type1 == Types.ICE || 
-                        attacker.type2 == Types.STEEL || attacker.type2 == Types.FIRE || attacker.type2 == Types.WATER || attacker.type2 == Types.ICE) {
+                    //Resist: Steel, Fire, Water, Ice
+                    if (move.getType() == Types.STEEL || move.getType() == Types.FIRE || move.getType() == Types.WATER || move.getType() == Types.ICE) {
                         modifier = modifier / 2;
                     }
                     break;
@@ -182,103 +299,238 @@ public class Slowdown {
         }
         
         if (defender.getTypeB() != null) {
-            switch (defender.type2) {
+            switch (defender.getTypeB()) {
                 case BUG:
+                    //Weak: Flying, Rock, Fire
+                    if (move.getType() == Types.FLYING || move.getType() == Types.ROCK || move.getType() == Types.FIRE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: Fighting, Ground, Grass
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.GROUND || move.getType() == Types.GRASS) {
+                        modifier = modifier / 2;
+                    }
                     break;
                 
                 case DARK:
+                    //Weak: BUG, FAIRY, FIGHTING
+                    if (move.getType() == Types.BUG || move.getType() == Types.FAIRY || move.getType() == Types.FIGHTING) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: GHOST, DARK
+                    if (move.getType() == Types.GHOST || move.getType() == Types.DARK) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: Psychic
+                    if (move.getType() == Types.PSYCHIC) {
+                        modifier = 0;
+                    }
                     break;
                 
                 case DRAGON:
+                    //Weak: DRAGON, FAIRY, ICE
+                    if (move.getType() == Types.DRAGON || move.getType() == Types.FAIRY || move.getType() == Types.ICE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: FIRE, WATER, GRASS, ELECTRIC
+                    if (move.getType() == Types.FIRE || move.getType() == Types.WATER || move.getType() == Types.GRASS || move.getType() == Types.ELECTRIC) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case ELECTRIC:
+                    //Weak: GROUND
+                    if (move.getType() == Types.GROUND) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: FLYING, ELECTRIC, STEEL
+                    if (move.getType() == Types.FLYING || move.getType() == Types.ELECTRIC || move.getType() == Types.STEEL) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case FAIRY:
+                    //Weak: POISON, STEEL
+                    if (move.getType() == Types.POISON || move.getType() == Types.STEEL) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: BUG, DARK, FIGHTING
+                    if (move.getType() == Types.BUG || move.getType() == Types.DARK || move.getType() == Types.FIGHTING) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: DRAGON
+                    if (move.getType() == Types.DRAGON) {
+                        modifier = 0;
+                    }
                     break;
     
                 case FIGHTING:
+                    //Weak: FAIRY, FLYING, PSYCHIC
+                    if (move.getType() == Types.FAIRY || move.getType() == Types.FLYING || move.getType() == Types.PSYCHIC) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: BUG, DARK, ROCK
+                    if (move.getType() == Types.BUG || move.getType() == Types.DARK || move.getType() == Types.ROCK) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case FIRE:
-                    if (attacker.type1 == Types.GROUND || attacker.type1 == Types.ROCK || attacker.type1 == Types.WATER || 
-                        attacker.type2 == Types.GROUND || attacker.type2 == Types.ROCK || attacker.type2 == Types.WATER) {
+                    //Weak: Ground, Rock, Water
+                    if (move.getType() == Types.GROUND || move.getType() == Types.ROCK || move.getType() == Types.WATER) {
                         modifier = modifier * 2;
                     }
-                    if (attacker.type1 == Types.BUG || attacker.type1 == Types.STEEL || attacker.type1 == Types.FIRE ||
-                        attacker.type1 == Types.GRASS || attacker.type1 == Types.ICE || attacker.type1 == Types.FAIRY ||  
-                        attacker.type2 == Types.BUG || attacker.type2 == Types.STEEL || attacker.type2 == Types.FIRE ||
-                        attacker.type2 == Types.GRASS || attacker.type2 == Types.ICE || attacker.type2 == Types.FAIRY) {
+                    //Resist: Bug, Steel, Fire, Grass, Ice, Fairy
+                    if (move.getType() == Types.BUG || move.getType() == Types.STEEL || move.getType() == Types.FIRE ||
+                        move.getType() == Types.GRASS || move.getType() == Types.ICE || move.getType() == Types.FAIRY) {
                         modifier = modifier / 2;
                     }
                     break;
     
                 case FLYING:
-                    if (attacker.type1 == Types.ELECTRIC || attacker.type1 == Types.ICE || attacker.type1 == Types.ROCK ||
-                        attacker.type2 == Types.ELECTRIC || attacker.type2 == Types.ICE || attacker.type2 == Types.ROCK) {
+                    //Weak: Electric, Ice, Rock
+                    if (move.getType() == Types.ELECTRIC || move.getType() == Types.ICE || move.getType() == Types.ROCK) {
                         modifier = modifier * 2;
                        }
-                    if (attacker.type1 == Types.BUG || attacker.type1 == Types.FIGHTING || attacker.type1 == Types.GRASS || 
-                        attacker.type2 == Types.BUG || attacker.type2 == Types.FIGHTING || attacker.type2 == Types.GRASS) {
+                    //Resist: Bug, Fighting, Grass
+                    if (move.getType() == Types.BUG || move.getType() == Types.FIGHTING || move.getType() == Types.GRASS) {
                         modifier = modifier / 2;
                     }
-                    if (attacker.type1 == Types.GROUND || attacker.type2 == Types.GROUND) {
-                        immune++;
+                    //Immune: Ground
+                    if (move.getType() == Types.GROUND) {
+                        modifier = 0;
                     }
                     break;
     
                 case GHOST:
+                    //Weak: DARK, GHOST
+                    if (move.getType() == Types.DARK || move.getType() == Types.GHOST) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: BUG, POISON
+                    if (move.getType() == Types.BUG || move.getType() == Types.POISON) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: NORMAL, FIGHTING
+                    if (move.getType() == Types.NORMAL || move.getType() == Types.FIGHTING) {
+                        modifier = 0;
+                    }
                     break;
     
                 case GRASS:
-                    if (attacker.type1 == Types.BUG || attacker.type1 == Types.FIRE || attacker.type1 == Types.FLYING || attacker.type1 == Types.ICE || attacker.type1 == Types.POISON ||
-                        attacker.type2 == Types.BUG || attacker.type2 == Types.FIRE || attacker.type2 == Types.FLYING || attacker.type2 == Types.ICE || attacker.type2 == Types.POISON) {
+                    //Weak: Bug, Fire, Flying, Ice, Poison
+                    if (move.getType() == Types.BUG || move.getType() == Types.FIRE || move.getType() == Types.FLYING ||
+                        move.getType() == Types.ICE || move.getType() == Types.POISON) {
                         modifier = modifier * 2;
                         }
-                    if (attacker.type1 == Types.ELECTRIC || attacker.type1 == Types.GRASS || attacker.type1 == Types.GROUND || attacker.type1 == Types.WATER ||
-                        attacker.type2 == Types.ELECTRIC || attacker.type2 == Types.GRASS || attacker.type2 == Types.GROUND || attacker.type2 == Types.WATER) {
+                    //Resist: Electric, Grass, Ground, Water
+                    if (move.getType() == Types.ELECTRIC || move.getType() == Types.GRASS || move.getType() == Types.GROUND || move.getType() == Types.WATER) {
                         modifier = modifier / 2;
                     }
                     break;
     
                 case GROUND:
+                    //Weak: WATER, GRASS, ICE
+                    if (move.getType() == Types.WATER || move.getType() == Types.GRASS || move.getType() == Types.ICE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: POISON, ROCK
+                    if (move.getType() == Types.POISON || move.getType() == Types.ROCK) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: ELECTRIC
+                    if (move.getType() == Types.ELECTRIC) {
+                        modifier = 0;
+                    }
                     break;
     
                 case ICE:
+                    //Weak: FIGHTING, ROCK, STEEL, FIRE
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.ROCK || move.getType() == Types.STEEL || move.getType() == Types.FIRE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: ICE
+                    if (move.getType() == Types.ICE) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case NORMAL:
+                    //Weak: FIGHTING
+                    if (move.getType() == Types.FIGHTING) {
+                        modifier = modifier * 2;
+                    }
+                    //Immune: GHOST
+                    if (move.getType() == Types.GHOST) {
+                        modifier = 0;
+                    }
                     break;
     
                 case POISON:
+                    //Weak: Ground, Psychic
+                    if (move.getType() == Types.GROUND || move.getType() == Types.PSYCHIC) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: Fighting, Poison, Bug, Grass, FAIRY
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.POISON || move.getType() == Types.BUG ||
+                        move.getType() == Types.GRASS || move.getType() == Types.FAIRY) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case PSYCHIC:
+                    //Weak: BUG, DARK, GHOST
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.POISON || move.getType() == Types.BUG) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: FIGHTING, PSYCHIC
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.PSYCHIC) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case ROCK:
+                    //Weak: FIGHTING, GROUND, STEEL, WATER, GRASS
+                    if (move.getType() == Types.FIGHTING || move.getType() == Types.GROUND || move.getType() == Types.STEEL||
+                        move.getType() == Types.GRASS || move.getType() == Types.GRASS) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: NORMAL, FLYING, POISON, FIRE
+                    if (move.getType() == Types.NORMAL || move.getType() == Types.FLYING || move.getType() == Types.POISON || move.getType() == Types.FIRE) {
+                        modifier = modifier / 2;
+                    }
                     break;
     
                 case STEEL:
+                    //Weak: GROUND, FIGHTING, FIRE
+                    if (move.getType() == Types.GROUND || move.getType() == Types.FIGHTING || move.getType() == Types.FIRE) {
+                        modifier = modifier * 2;
+                    }
+                    //Resist: NORMAL, FLYING, ROCK, BUG, STEEL, GRASS, PSYCHIC, ICE, FAIRY, DRAGON
+                    if (move.getType() == Types.NORMAL || move.getType() == Types.FLYING || move.getType() == Types.ROCK || move.getType() == Types.BUG ||
+                        move.getType() == Types.STEEL || move.getType() == Types.GRASS || move.getType() == Types.PSYCHIC || move.getType() == Types.ICE ||
+                        move.getType() == Types.FAIRY || move.getType() == Types.DRAGON) {
+                        modifier = modifier / 2;
+                    }
+                    //Immune: POISON
+                    if (move.getType() == Types.POISON) {
+                        modifier = 0;
+                    }
                     break;
             
                 case WATER:
-                    if (attacker.type1 == Types.ELECTRIC || attacker.type1 == Types.GRASS ||
-                        attacker.type2 == Types.ELECTRIC || attacker.type2 == Types.GRASS) {
+                    //Weak: Electric, Grass
+                    if (move.getType() == Types.ELECTRIC || move.getType() == Types.GRASS) {
                         modifier = modifier * 2;
                     }
-                    if (attacker.type1 == Types.STEEL || attacker.type1 == Types.FIRE || attacker.type1 == Types.WATER || attacker.type1 == Types.ICE || 
-                        attacker.type2 == Types.STEEL || attacker.type2 == Types.FIRE || attacker.type2 == Types.WATER || attacker.type2 == Types.ICE) {
+                    //Resist: Steel, Fire, Water, Ice
+                    if (move.getType() == Types.STEEL || move.getType() == Types.FIRE || move.getType() == Types.WATER || move.getType() == Types.ICE) {
                         modifier = modifier / 2;
                     }
                     break;
             }
         }
         
-        if (immune == 1) {
-            modifier = 0;
-        } else if (modifier > 1) {
+        if (modifier > 1) {
             superEff++;
         } else if (modifier < 1) {
             notVeryEff++;
@@ -301,9 +553,9 @@ public class Slowdown {
         System.out.println(foe.getName() + " appears!");
         Random rng = new Random();
         //Until KO
-        while (friend.healthPoints >= 1 && foe.healthPoints >= 1) {
+        while (friend.getHP() >= 1 && foe.getHP() >= 1) {
 			Move selected;
-            if (friend.speed > foe.speed) {
+            if (friend.getSpe() > foe.getSpe()) {
                 //randomly select an available move
                 selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
                 System.out.println(friend.getName() + " uses " + selected.getName() + "!");
@@ -341,7 +593,7 @@ public class Slowdown {
 				}
             }
         }
-        if (foe.healthPoints < 1) {
+        if (foe.getHP() < 1) {
             System.out.println("The enemy " + foe.getName() + " fainted!");
             return friend;
         } else {
