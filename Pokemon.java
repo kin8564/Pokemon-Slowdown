@@ -3,7 +3,7 @@
  */
 public class Pokemon {
     private String name;
-    private int healthPoints, attack, defense, specialAttack, specialDefense, speed;
+    private int healthPoints, attack, defense, specialAttack, specialDefense, speed, accuracy, evasion;
     private Types type1, type2;
     private Move[] moves;
     //private Move move1, move2, move3, move4;

@@ -7,6 +7,6 @@
 
 ## Back and Forth
 
-- Accuracy check
+- Accuracy / Evasion
 - PP
 - Status moves

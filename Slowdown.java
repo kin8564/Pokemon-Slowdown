@@ -1,4 +1,4 @@
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -26,10 +26,11 @@ public class Slowdown {
      */
     public static void damageCalc (Pokemon attacker, Pokemon defender, Move move) {
 		Random rng = new Random();
+        double critCalc = 0;
         double stab = 1.0;
-        int randFact = 0;
-        int force = 0;
-        int object = 0;
+        double randFact = 0;
+        double force = 0;
+        double object = 0;
         //physical or special attack
         if (move.getCat() == 1) {
             force = attacker.getAtk();
@@ -39,28 +40,28 @@ public class Slowdown {
             object = defender.getSpd();
         }
         //critical hit
-        int critCalc = rng.nextInt(256);
+        critCalc = rng.nextInt(256);
         if (critCalc < (attacker.getSpe() / 2)) {
-            critCalc = 2;
+            critCalc = 1.5;
             System.out.println("It's a critical hit!");
         } else {
-            critCalc = 1;
+            critCalc = 1.0;
         }
         //random factor
-        randFact = (rng.nextInt(85, 101) / 100);
+        randFact = (rng.nextInt(85, 101) / 100.0);
         //same type attack bonus
         if (move.getType() == attacker.getTypeA() || move.getType() == attacker.getTypeB()) {
             stab = 1.5;
         }
 
-        int baseDamage = (int) ((((22) * move.getPow() * (force / object)) / 50 + 2) * critCalc * randFact * stab);
+        int baseDamage = (int) ((((22) * move.getPow() * (force / object)) / (50.0 + 2)) * critCalc * randFact * stab);
         int[]dmgArray = typeMultiplier(baseDamage, move, defender);
         baseDamage = dmgArray[0];
-        if (dmgArray[0] == 1) {
+        if (dmgArray[1] == 1) {
             System.out.println("It's super effective!");
-        } else if (dmgArray[1] == 1) {
-            System.out.println("It's not very effective...");
         } else if (dmgArray[2] == 1) {
+            System.out.println("It's not very effective...");
+        } else if (dmgArray[3] == 1) {
             System.out.println("It doesn't affect " + defender.getName() + "...");
         }
         defender.setHP(defender.getHP() - baseDamage);
@@ -77,6 +78,7 @@ public class Slowdown {
         double modifier = 1.0;
         int superEff = 0;
         int notVeryEff = 0;
+        int noEff = 0;
         int[] dmgArray;
 
         if (defender.getTypeA() != null) {
@@ -545,11 +547,13 @@ public class Slowdown {
         
         if (modifier > 1) {
             superEff++;
+        } else if (modifier == 0) {
+            noEff++;
         } else if (modifier < 1) {
             notVeryEff++;
         }
         damage = (int)(damage * modifier);
-        dmgArray = new int[] {damage, superEff, notVeryEff};
+        dmgArray = new int[] {damage, superEff, notVeryEff, noEff};
         return dmgArray;
     }
 
@@ -563,6 +567,10 @@ public class Slowdown {
         System.out.println("Nothing happened...");
 	}
 
+    public static void accuracyCheck() {
+        
+    }
+
     /**
      * Battle between two Pokemon
      * @param friend
@@ -570,8 +578,9 @@ public class Slowdown {
      * @return
      */
     public static Pokemon battle(Pokemon friend, Pokemon foe) {
-        System.out.println(foe.getName() + " appears!");
+        TimeUnit time = TimeUnit.SECONDS;
         Random rng = new Random();
+        System.out.println(foe.getName() + " appears!");
         //Until KO
         while (friend.getHP() >= 1 && foe.getHP() >= 1) {
 			Move selected;
@@ -579,38 +588,82 @@ public class Slowdown {
                 //randomly select an available move
                 selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
                 System.out.println(friend.getName() + " uses " + selected.getName() + "!");
+                    try {
+                        time.sleep((2));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
 				if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
 				}
-                
+                    //Pause after every attack
+                    try {
+                        time.sleep((3));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
+
 				//enemy attacks next
 				selected = foe.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
+                    try {
+                        time.sleep((2));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
                 if (selected.getCat() == 3) {
 					statusCalc(foe, friend, selected);
 				} else {
 					damageCalc(foe, friend, selected);
 				}
+                    //Pause after every attack
+                    try {
+                        time.sleep((3));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
             } else {
                 //enemy randomly selects an available move
 				selected = foe.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
+                    try {
+                        time.sleep((2));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
                 if (selected.getCat() == 3) {
 					statusCalc(foe, friend, selected);
 				} else {
 					damageCalc(foe, friend, selected);
 				}
+                    //Pause after every attack
+                    try {
+                        time.sleep((3));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
                 
 				//you attack next
 				selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
 				System.out.println(friend.getName() + " uses " + selected.getName() + "!");
+                    try {
+                        time.sleep((2));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
                 if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
 				}
+                    //Pause after every attack
+                    try {
+                        time.sleep((3));
+                    } catch (InterruptedException e) {
+                        System.out.println("G a m e  c r a s h e d");
+                    }
             }
         }
         if (foe.getHP() < 1) {
