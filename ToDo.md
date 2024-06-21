@@ -10,3 +10,10 @@
 - Accuracy / Evasion
 - PP
 - Status moves
+
+## Iterations
+
+- Battles run themselves
+- User input for battles
+- Plain text UI for battles
+- Graphical UI for battles

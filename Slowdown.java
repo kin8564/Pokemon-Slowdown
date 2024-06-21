@@ -3,16 +3,6 @@ import java.util.concurrent.TimeUnit;
 
 /*
  * Pokemon Battle Simulator
- * TODO
- *      Movesets
- *      PokeDex
- *      AttackDex
- *      Review damage calculation
- *      Iterations
- *          Battles run themselves
- *          User input for battles
- *          Plain text UI for battles
- *          Graphical UI for battles
  */
 public class Slowdown {
     
@@ -568,7 +558,7 @@ public class Slowdown {
 	}
 
     public static void accuracyCheck() {
-        
+
     }
 
     /**
