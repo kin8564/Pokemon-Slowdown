@@ -8,3 +8,8 @@ Pokemon Slowdown is a Java application aiming to simulate Pokemon battles, in li
 - Full team battles, 6 v 6
 - Battle system heavily inspired by the fifth generation, with liberties
 - Physical / Special Split
+
+## Calculation Sources
+
+- [Damage](https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward)
+- [Stage Multipliers](https://bulbapedia.bulbagarden.net/wiki/Stat_modifier#Stage_multipliers)

@@ -1,10 +1,64 @@
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/*
+/**
  * Pokemon Battle Simulator
  */
 public class Slowdown {
+
+    public static HashMap<Integer, Double> statMultiplier;
+
+    public static HashMap<Integer, Double> accMultiplier;
+
+    public static HashMap<Integer, Double> evaMultiplier;
+
+    /**
+     * Populates the three stat multiplier hash maps. Attack, Defense, Special Attack, Special Defense, and Speed share the same stage-multipler hash map.
+     * Accuracy and evasion have separate hash maps, yet the vaules are similar.
+     */
+    public static void multiPopulate() {
+        statMultiplier.put(-6, 2.0/8.0);
+        statMultiplier.put(-5, 2.0/7.0);
+        statMultiplier.put(-4, 2.0/6.0);
+        statMultiplier.put(-3, 2.0/5.0);
+        statMultiplier.put(-2, 2.0/4.0);
+        statMultiplier.put(-1, 2.0/3.0);
+        statMultiplier.put(0, 2.0/2.0);
+        statMultiplier.put(1, 3.0/2.0);
+        statMultiplier.put(2, 4.0/2.0);
+        statMultiplier.put(3, 5.0/2.0);
+        statMultiplier.put(4, 6.0/2.0);
+        statMultiplier.put(5, 7.0/2.0);
+        statMultiplier.put(6, 8.0/2.0);
+
+        accMultiplier.put(-6, 3.0/9.0);
+        accMultiplier.put(-5, 3.0/8.0);
+        accMultiplier.put(-4, 3.0/7.0);
+        accMultiplier.put(-3, 3.0/6.0);
+        accMultiplier.put(-2, 3.0/5.0);
+        accMultiplier.put(-1, 3.0/4.0);
+        accMultiplier.put(0, 3.0/3.0);
+        accMultiplier.put(1, 4.0/3.0);
+        accMultiplier.put(2, 5.0/3.0);
+        accMultiplier.put(3, 6.0/3.0);
+        accMultiplier.put(4, 7.0/3.0);
+        accMultiplier.put(5, 8.0/3.0);
+        accMultiplier.put(6, 9.0/3.0);
+
+        evaMultiplier.put(6, 3.0/9.0);
+        evaMultiplier.put(5, 3.0/8.0);
+        evaMultiplier.put(4, 3.0/7.0);
+        evaMultiplier.put(3, 3.0/6.0);
+        evaMultiplier.put(2, 3.0/5.0);
+        evaMultiplier.put(1, 3.0/4.0);
+        evaMultiplier.put(0, 3.0/3.0);
+        evaMultiplier.put(-1, 4.0/3.0);
+        evaMultiplier.put(-2, 5.0/3.0);
+        evaMultiplier.put(-3, 6.0/3.0);
+        evaMultiplier.put(-4, 7.0/3.0);
+        evaMultiplier.put(-5, 8.0/3.0);
+        evaMultiplier.put(-6, 9.0/3.0);
+    }
     
     /**
      * Gen V Calculator
@@ -549,12 +603,30 @@ public class Slowdown {
 
 	/**Change a Pokemon's state depending on the status move used
 	 * @param attacker
-	 * @param defenfer
+	 * @param defender
 	 * @param move
-     * TODO
 	 */
-	public static void statusCalc(Pokemon attacker, Pokemon defenfer, Move move) {
-        System.out.println("Nothing happened...");
+	public static void statusCalc(Pokemon attacker, Pokemon defender, Move move) {
+        //{buff/debuff, atk, def, spa, spd, spe, acc, eva}
+        int[] effect = move.getEff();
+        if (effect[0] == 0) { //if buffing self
+            if (effect[1] != 0) {
+                
+            } if (effect[2] != 0) {
+                
+            } if (effect[3] != 0) {
+                
+            } if (effect[4] != 0) {
+                
+            } if (effect[5] != 0) {
+                
+            } if (effect[6] != 0) {
+                
+            } if (effect[7] != 0) {
+                
+            } 
+        }
+
 	}
 
     public static void accuracyCheck() {
@@ -668,7 +740,8 @@ public class Slowdown {
 
     public static void main(String[] args) {    
         AttackDex.populate();        
-        PokeDex.populate();    
+        PokeDex.populate();
+        multiPopulate();
 
         //User Charmander vs enemy Squirtle
         Pokemon winner = battle(PokeDex.pokedex[4], PokeDex.pokedex[7]);
