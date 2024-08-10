@@ -17,6 +17,7 @@ public class Slowdown {
      * Accuracy and evasion have separate hash maps, yet the vaules are similar.
      */
     public static void multiPopulate() {
+        statMultiplier = new HashMap<>();
         statMultiplier.put(-6, 2.0/8.0);
         statMultiplier.put(-5, 2.0/7.0);
         statMultiplier.put(-4, 2.0/6.0);
@@ -31,6 +32,7 @@ public class Slowdown {
         statMultiplier.put(5, 7.0/2.0);
         statMultiplier.put(6, 8.0/2.0);
 
+        accMultiplier = new HashMap<>();
         accMultiplier.put(-6, 3.0/9.0);
         accMultiplier.put(-5, 3.0/8.0);
         accMultiplier.put(-4, 3.0/7.0);
@@ -45,6 +47,7 @@ public class Slowdown {
         accMultiplier.put(5, 8.0/3.0);
         accMultiplier.put(6, 9.0/3.0);
 
+        evaMultiplier = new HashMap<>();
         evaMultiplier.put(6, 3.0/9.0);
         evaMultiplier.put(5, 3.0/8.0);
         evaMultiplier.put(4, 3.0/7.0);
@@ -92,7 +95,7 @@ public class Slowdown {
             critCalc = 1.0;
         }
         //random factor
-        randFact = (rng.nextInt(85, 101) / 100.0);
+        randFact = ((rng.nextInt(16)+85) / 100.0);
         //same type attack bonus
         if (move.getType() == attacker.getTypeA() || move.getType() == attacker.getTypeB()) {
             stab = 1.5;
@@ -109,6 +112,7 @@ public class Slowdown {
             System.out.println("It doesn't affect " + defender.getName() + "...");
         }
         defender.setHP(defender.getHP() - baseDamage);
+        System.out.println(baseDamage + " damage!");
     }
 
     /**
@@ -601,7 +605,9 @@ public class Slowdown {
         return dmgArray;
     }
 
-	/**Change a Pokemon's state depending on the status move used
+	/**
+     * Change a Pokemon's state depending on the status move used
+     * TODO accuracy and evasion
 	 * @param attacker
 	 * @param defender
 	 * @param move
@@ -609,26 +615,111 @@ public class Slowdown {
 	public static void statusCalc(Pokemon attacker, Pokemon defender, Move move) {
         //{buff/debuff, atk, def, spa, spd, spe, acc, eva}
         int[] effect = move.getEff();
+        double mult;
+        int multStage;
         if (effect[0] == 0) { //if buffing self
-            if (effect[1] != 0) {
+            if (effect[1] != 0) { //buff attack
+                multStage = effect[1];
+                attacker.setAtkStage(multStage);
+                multStage = attacker.getAtkStage();
+                mult = statMultiplier.get(multStage);
+                int newAtk = (int) (mult * attacker.getAtk());
+                attacker.setAtk(newAtk);
+                System.out.println(attacker.getName() + "'s attack rose!");
+            } if (effect[2] != 0) { //buff defence
+                multStage = effect[2];
+                attacker.setDefStage(multStage);
+                multStage = attacker.getDefStage();
+                mult = statMultiplier.get(multStage);
+                int newDef = (int) (mult * attacker.getDef());
+                attacker.setDef(newDef);
+                System.out.println(attacker.getName() + "'s defence rose!");
+            } if (effect[3] != 0) { //buff special attack
+                multStage = effect[3];
+                attacker.setSpaStage(multStage);
+                multStage = attacker.getSpaStage();
+                mult = statMultiplier.get(multStage);
+                int newSpa = (int) (mult * attacker.getSpa());
+                attacker.setSpa(newSpa);
+                System.out.println(attacker.getName() + "'s special attack rose!");
+            } if (effect[4] != 0) { //buff special defence
+                multStage = effect[4];
+                attacker.setSpdStage(multStage);
+                multStage = attacker.getSpdStage();
+                mult = statMultiplier.get(multStage);
+                int newSpd = (int) (mult * attacker.getSpd());
+                attacker.setSpd(newSpd);
+                System.out.println(attacker.getName() + "'s special defence rose!");
+            } if (effect[5] != 0) { //buff speed
+                multStage = effect[5];
+                attacker.setSpeStage(multStage);
+                multStage = attacker.getSpeStage();
+                mult = statMultiplier.get(multStage);
+                int newSpe = (int) (mult * attacker.getSpe());
+                attacker.setSpe(newSpe);
+                System.out.println(attacker.getName() + "'s speed rose!");
+            } if (effect[6] != 0) { //buff accuracy
                 
-            } if (effect[2] != 0) {
+                System.out.println(attacker.getName() + "'s accuracy rose!");
+            } if (effect[7] != 0) { //evasion
                 
-            } if (effect[3] != 0) {
-                
-            } if (effect[4] != 0) {
-                
-            } if (effect[5] != 0) {
-                
-            } if (effect[6] != 0) {
-                
-            } if (effect[7] != 0) {
-                
+                System.out.println(attacker.getName() + "'s evasion rose!");
             } 
+        } else if (effect[0] == 1) { //debuffing opponent
+            if (effect[1] != 0) { //debuff attack
+                multStage = effect[1];
+                defender.setAtkStage(multStage);
+                multStage = defender.getAtkStage();
+                mult = statMultiplier.get(multStage);
+                int newAtk = (int) (mult * defender.getAtk());
+                defender.setAtk(newAtk);
+                System.out.println(defender.getName() + "'s attack fell!");
+            } if (effect[2] != 0) { //debuff defence
+                multStage = effect[2];
+                defender.setDefStage(multStage);
+                multStage = defender.getDefStage();
+                mult = statMultiplier.get(multStage);
+                int newDef = (int) (mult * defender.getDef());
+                defender.setDef(newDef);
+                System.out.println(defender.getName() + "'s defence fell!");
+            } if (effect[3] != 0) { //debuff special attack
+                multStage = effect[3];
+                defender.setSpaStage(multStage);
+                multStage = defender.getSpaStage();
+                mult = statMultiplier.get(multStage);
+                int newSpa = (int) (mult * defender.getSpa());
+                defender.setSpa(newSpa);
+                System.out.println(defender.getName() + "'s special attack fell!");
+            } if (effect[4] != 0) { //debuff special defence
+                multStage = effect[4];
+                defender.setSpdStage(multStage);
+                multStage = defender.getSpdStage();
+                mult = statMultiplier.get(multStage);
+                int newSpd = (int) (mult * defender.getSpd());
+                defender.setSpd(newSpd);
+                System.out.println(defender.getName() + "'s special defence fell!");
+            } if (effect[5] != 0) { //debuff speed
+                multStage = effect[5];
+                defender.setSpeStage(multStage);
+                multStage = defender.getSpeStage();
+                mult = statMultiplier.get(multStage);
+                int newSpe = (int) (mult * defender.getSpe());
+                defender.setSpe(newSpe);
+                System.out.println(defender.getName() + "'s speed fell!");
+            } if (effect[6] != 0) { // debuff accuracy
+
+                System.out.println(defender.getName() + "'s accuracy fell!");
+            } if (effect[7] != 0) { //debuff evasion
+
+                System.out.println(defender.getName() + "'s evasion fell!");
+            }
         }
 
 	}
 
+    /*
+     * TODO
+     */
     public static void accuracyCheck() {
 
     }
@@ -650,82 +741,84 @@ public class Slowdown {
                 //randomly select an available move
                 selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
                 System.out.println(friend.getName() + " uses " + selected.getName() + "!");
-                    try {
-                        time.sleep((2));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((2));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
 				if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
 				}
                     //Pause after every attack
-                    try {
-                        time.sleep((3));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
-
+                    // try {
+                    //     time.sleep((3));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
+                
+                if (foe.getHP() < 1) break; 
 				//enemy attacks next
 				selected = foe.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
-                    try {
-                        time.sleep((2));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((2));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
                 if (selected.getCat() == 3) {
 					statusCalc(foe, friend, selected);
 				} else {
 					damageCalc(foe, friend, selected);
 				}
                     //Pause after every attack
-                    try {
-                        time.sleep((3));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((3));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
             } else {
                 //enemy randomly selects an available move
 				selected = foe.getMove(rng.nextInt(foe.getMovesNum()-1));
 				System.out.println(foe.getName() + " uses " + selected.getName() + "!");
-                    try {
-                        time.sleep((2));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((2));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
                 if (selected.getCat() == 3) {
 					statusCalc(foe, friend, selected);
 				} else {
 					damageCalc(foe, friend, selected);
 				}
                     //Pause after every attack
-                    try {
-                        time.sleep((3));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((3));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
                 
+                if (friend.getHP() < 1) break;
 				//you attack next
 				selected = friend.getMove(rng.nextInt(friend.getMovesNum()-1));
 				System.out.println(friend.getName() + " uses " + selected.getName() + "!");
-                    try {
-                        time.sleep((2));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((2));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
                 if (selected.getCat() == 3) {
 					statusCalc(friend, foe, selected);
 				} else {
 					damageCalc(friend, foe, selected);
 				}
                     //Pause after every attack
-                    try {
-                        time.sleep((3));
-                    } catch (InterruptedException e) {
-                        System.out.println("G a m e  c r a s h e d");
-                    }
+                    // try {
+                    //     time.sleep((3));
+                    // } catch (InterruptedException e) {
+                    //     System.out.println("G a m e  c r a s h e d");
+                    // }
             }
         }
         if (foe.getHP() < 1) {

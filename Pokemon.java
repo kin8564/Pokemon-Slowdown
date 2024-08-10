@@ -3,10 +3,18 @@
  */
 public class Pokemon {
     private String name;
+
+    //Excluding health, base stats for a pokemon that do not change during battle
     private int healthPoints, attack, defense, specialAttack, specialDefense, speed, accuracy, evasion;
+    
     private Types type1, type2;
-    private Move[] moves; //{move1, move2, move3, move4}
+    
+    //{move1, move2, move3, move4}
+    private Move[] moves;
+
+    //Reflect stat changes during battle
     private int[] statAtk, statDef, statSpa, statSpd, statSpe;
+    
     private double[] statAcc, statEva;
     
 
@@ -56,13 +64,16 @@ public class Pokemon {
     }
 
     public void setAtk(int x) {
-        int stage = this.statAtk[0];
-        stage += x;
-        // limit check in showdown
-        // if (stage > 6) stage = 6;
-        // if (stage < -6) stage = -6;
-        double mult = Slowdown.statMultiplier.get(stage);
-        this.statAtk[1] = (int) (this.attack * mult);
+        this.statAtk[1] = x;
+    }
+
+    public void setAtkStage(int x) {
+        this.statAtk[0] += x;
+        if (this.statAtk[0] > 6) {
+            this.statAtk[0] = 6;
+        } else if (this.statAtk[0] < -6) {
+            this.statAtk[0] = -6;
+        }
     }
 
     public int getDef() {
@@ -74,10 +85,16 @@ public class Pokemon {
     }
 
     public void setDef(int x) {
-        int stage = this.statDef[0];
-        stage += x;
-        double mult = Slowdown.statMultiplier.get(stage);
-        this.statDef[1] = (int) (this.defense * mult);
+        this.statDef[1] = x;
+    }
+
+    public void setDefStage(int x) {
+        this.statDef[0] += x;
+        if (this.statDef[0] > 6) {
+            this.statDef[0] = 6;
+        } else if (this.statDef[0] < -6) {
+            this.statDef[0] = -6;
+        }
     }
 
     public int getSpa() {
@@ -89,10 +106,16 @@ public class Pokemon {
     }
 
     public void setSpa(int x) {
-        int stage = this.statSpa[0];
-        stage += x;
-        double mult = Slowdown.statMultiplier.get(stage);
-        this.statSpa[1] = (int) (this.specialAttack * mult);
+        this.statSpa[1] = x;
+    }
+
+    public void setSpaStage(int x) {
+        this.statSpa[0] += x;
+        if (this.statSpa[0] > 6) {
+            this.statSpa[0] = 6;
+        } else if (this.statSpa[0] < -6) {
+            this.statSpa[0] = -6;
+        }
     }
 
     public int getSpd() {
@@ -104,25 +127,37 @@ public class Pokemon {
     }
 
     public void setSpd(int x) {
-        int stage = this.statSpd[0];
-        stage += x;
-        double mult = Slowdown.statMultiplier.get(stage);
-        this.statSpd[1] = (int) (this.specialDefense * mult);
+        this.statSpd[1] = x;
+    }
+
+    public void setSpdStage(int x) {
+        this.statSpd[0] += x;
+        if (this.statSpd[0] > 6) {
+            this.statSpd[0] = 6;
+        } else if (this.statSpd[0] < -6) {
+            this.statSpd[0] = -6;
+        }
     }
 
     public int getSpe() {
-        return this.statSpe[0];
-    }
-
-    public int getSpeStage() {
         return this.statSpe[1];
     }
 
+    public int getSpeStage() {
+        return this.statSpe[0];
+    }
+
     public void setSpe(int x) {
-        int stage = this.statSpe[0];
-        stage += x;
-        double mult = Slowdown.statMultiplier.get(stage);
-        this.statSpe[1] = (int) (this.speed * mult);
+        this.statSpe[1] = x;
+    }
+
+    public void setSpeStage(int x) {
+        this.statSpe[0] += x;
+        if (this.statSpe[0] > 6) {
+            this.statSpe[0] = 6;
+        } else if (this.statSpe[0] < -6) {
+            this.statSpe[0] = -6;
+        }
     }
 
     //Get the first type of a Pokemon
@@ -187,6 +222,10 @@ public class Pokemon {
 
     public int getAcc() {
         return this.accuracy;
+    }
+
+    public double getAccStage() {
+        return this.statAcc[0];
     }
 
     public void setAcc(int x) {
